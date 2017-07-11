@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NFCTag</string>
+    <string name="menu_settings">Settings</string>
+    <string name="send_nothing">Send \'Nothing\'</string>
+</resources>
