@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kisi.acai.nfctag.databinding.ActivityNfctagBinding;
@@ -46,6 +45,9 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
     NfcAdapter mNfcAdapter;
     private ActivityNfctagBinding binding;
 
+    private TimingHandler timeHandler;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,10 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
             // Register callback to listen for message-sent success
             mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
         }
+        timeHandler = new TimingHandler();
+        timeHandler.setActivity(this);
+        timeHandler.start();
+
     }
 
 
@@ -75,8 +81,8 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
     public NdefMessage createNdefMessage(NfcEvent event) {
         Time time = new Time();
         time.setToNow();
-        String text = (messageToSend+"\n\n" +
-                "Beam Time: " + time.format("%H:%M:%S"));
+        String text = messageToSend+"\n\n";// +
+//                "Beam Time: " + time.format("%H:%M:%S");
         Log.d(TAG,"::createNdefMessage sent message: "+text);
         NdefMessage msg = new NdefMessage(NdefRecord.createMime(
                 "application/com.kisi.acai.nfcreader", text.getBytes())
@@ -173,5 +179,22 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
         }else{
             messageToSend = UNLOCK_MSJ;
         }
+    }
+
+    public void tick() {
+
+        toggleMessage();
+
+    }
+
+    private void toggleMessage() {
+
+        binding.sendNothing.toggle();
+        if ( binding.sendNothing.isChecked() ){
+            messageToSend = NOTHING_MSJ;
+        }else{
+            messageToSend = UNLOCK_MSJ;
+        }
+
     }
 }
