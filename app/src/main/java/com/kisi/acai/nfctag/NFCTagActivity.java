@@ -54,7 +54,6 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
         binding = DataBindingUtil.setContentView(this, R.layout.activity_nfctag);
         binding.setActivity(this);
 
-//        mInfoText = (TextView) findViewById(R.id.text_view);
         // Check for available NFC Adapter
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
@@ -79,22 +78,10 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
      */
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        Time time = new Time();
-        time.setToNow();
-        String text = messageToSend+"\n\n";// +
-//                "Beam Time: " + time.format("%H:%M:%S");
+        String text = messageToSend+"\n\n";
         Log.d(TAG,"::createNdefMessage sent message: "+text);
         NdefMessage msg = new NdefMessage(NdefRecord.createMime(
                 "application/com.kisi.acai.nfcreader", text.getBytes())
-                /**
-                 * The Android Application Record (AAR) is commented out. When a device
-                 * receives a push with an AAR in it, the application specified in the AAR
-                 * is guaranteed to run. The AAR overrides the tag dispatch system.
-                 * You can add it back in to guarantee that this
-                 * activity starts when receiving a beamed message. For now, this code
-                 * uses the tag dispatch system.
-                 */
-                //,NdefRecord.createApplicationRecord("com.kisi.acai.nfcreader")
         );
         return msg;
     }
