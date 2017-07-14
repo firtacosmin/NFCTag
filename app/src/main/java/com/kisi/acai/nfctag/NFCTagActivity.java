@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.kisi.acai.nfctag.databinding.ActivityNfctagBinding;
+import com.kisi.acai.nfctag.nfccard.MyHostApduService;
 
 /**
  * Created by firta on 7/12/2017.
@@ -33,8 +34,8 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
     /**
      * the messages to send
      */
-    private static final String UNLOCK_MSJ = "unlock";
-    private static final String NOTHING_MSJ = "nothing";
+    private static final String UNLOCK_MSJ = MyHostApduService.UNLOCK;
+    private static final String NOTHING_MSJ = MyHostApduService.NOTHING;
 
 
     private static final int MESSAGE_SENT = 1;
@@ -55,17 +56,17 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
         binding.setActivity(this);
 
         // Check for available NFC Adapter
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mNfcAdapter == null) {
-//            mInfoText.setText("NFC is not available on this device.");
-            binding.textView.setText("NFC is not available on this device.");
-        } else {
-            binding.textView.setText("All Good.");
-            // Register callback to set NDEF message
-            mNfcAdapter.setNdefPushMessageCallback(this, this);
-            // Register callback to listen for message-sent success
-            mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
-        }
+//        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+//        if (mNfcAdapter == null) {
+////            mInfoText.setText("NFC is not available on this device.");
+//            binding.textView.setText("NFC is not available on this device.");
+//        } else {
+//            binding.textView.setText("All Good.");
+//            // Register callback to set NDEF message
+//            mNfcAdapter.setNdefPushMessageCallback(this, this);
+//            // Register callback to listen for message-sent success
+//            mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
+//        }
         timeHandler = new TimingHandler();
         timeHandler.setActivity(this);
         timeHandler.start();
@@ -166,6 +167,7 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
         }else{
             messageToSend = UNLOCK_MSJ;
         }
+        updateServiceMessage();
     }
 
     public void tick() {
@@ -182,6 +184,13 @@ public class NFCTagActivity extends AppCompatActivity implements NfcAdapter.Crea
         }else{
             messageToSend = UNLOCK_MSJ;
         }
+        updateServiceMessage();
 
+    }
+
+    private void updateServiceMessage(){
+        Intent intent = new Intent(this, MyHostApduService.class);
+        intent.putExtra("message", messageToSend);
+        startService(intent);
     }
 }
